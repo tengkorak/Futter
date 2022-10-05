@@ -38,7 +38,6 @@ services:
       MYSQL_DATABASE: forge
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
     networks:
         futter_network:
             aliases:
