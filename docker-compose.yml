@@ -1,0 +1,58 @@
+version: '3.5'
+services:
+  webserver:
+    image: nginx:alpine
+    volumes:
+        - ./:/var/www
+        - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+            ## run the webserver on port 8080 ##
+      - "80:80"
+    networks:
+        futter_network:
+            aliases:
+            - futter
+  app:
+        ## read php image from our custom docker image ##
+    build:
+      context: .
+      dockerfile: ./DockerFile
+    volumes:
+      ## copy project files to /var/www ##
+      - ./:/var/www
+    working_dir: /var/www
+    networks:
+        futter_network:
+          aliases:
+            - futter
+
+  db:
+    image: mysql:5.7
+    ## expose the mysql port to our machine so we can access it from any mysql-client like TablePlus ##
+    ports:
+      - "3306:3306"
+   ## keep mysql data on localhost so we don't lose them ##
+    volumes:
+      - ./docker-volumes-data/db:/var/lib/database
+    environment:
+      MYSQL_DATABASE: forge
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+        futter_network:
+            aliases:
+            -  mysql
+  redis:
+    image: redis
+    volumes:
+      ## keep redis data on localhost so we don't lose them ##
+      - ./docker-volumes-data/redis:/data
+    networks:
+        futter_network:
+            aliases:
+            -  redis
+
+networks: 
+    futter_network:
+
